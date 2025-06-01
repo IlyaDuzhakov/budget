@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Финансовый помощник</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Финансовый помощник</h1>
+
+    <form id="transaction-form">
+      <input type="number" id="amount" placeholder="Сумма" required />
+      <select id="type">
+        <option value="income">Доход</option>
+        <option value="expense">Расход</option>
+      </select>
+      <input type="text" id="category" placeholder="Категория" required />
+      <input type="date" id="date" required />
+      <input type="text" id="comment" placeholder="Комментарий" />
+      <div style="margin-top:10px;">
+        <span id="currency-flag" style="font-size:24px">🇷🇺</span>
+        <select id="currency">
+          <option value="RUB">RUB</option>
+        </select>
+        <input type="number" id="rate" placeholder="Курс к рублю" step="0.01" />
+      </div>
+      <button type="submit">Добавить</button>
+    </form>
+
+    <h2>Транзакции</h2>
+    <table id="transaction-table">
+      <thead>
+        <tr>
+          <th>Дата</th>
+          <th>Тип</th>
+          <th>Сумма</th>
+          <th>Категория</th>
+          <th>Комментарий</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="buttons">
+      <button id="save-csv"><i class="fas fa-file-csv"></i> CSV</button>
+      <button id="print-report"><i class="fas fa-print"></i> Печать</button>
+    </div>
+
+    <button id="toggle-currency-table" class="currency-toggle">💱 Валюты</button>
+    <div id="currency-table" class="currency-table" style="display: none;"></div>
+
+    <h2>Графики</h2>
+    <canvas id="doughnutChart" width="300" height="300"></canvas>
+    <canvas id="lineChart" width="600" height="300"></canvas>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
