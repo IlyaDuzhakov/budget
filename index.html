@@ -14,10 +14,17 @@
 
     <form id="transaction-form">
       <input type="number" id="amount" placeholder="Сумма" required />
-      <select id="type">
-        <option value="income">Доход</option>
-        <option value="expense">Расход</option>
-      </select>
+      <div class="type-toggle">
+  <label>
+    <input type="radio" name="type" value="income" checked />
+    <span>💰 Доход</span>
+  </label>
+  <label>
+    <input type="radio" name="type" value="expense" />
+    <span>📉 Расход</span>
+  </label>
+</div>
+
       <input type="text" id="category" placeholder="Категория" required />
       <input type="date" id="date" required />
       <input type="text" id="comment" placeholder="Комментарий" />
@@ -28,8 +35,47 @@
         </select>
         <input type="number" id="rate" placeholder="Курс к рублю" step="0.01" />
       </div>
+     <div class="quick-currencies-split">
+  <div class="left">
+    <button class="quick-currency" data-code="USD">🇺🇸 USD</button>
+  </div>
+  <div class="right">
+    <button class="quick-currency" data-code="EUR">🇪🇺 EUR</button>
+  </div>
+</div>
+
+
       <button type="submit">Добавить</button>
     </form>
+
+    <button id="toggle-calculator" class="popup-calc-btn">
+  <i class="fas fa-calculator"></i> Калькулятор
+</button>
+
+
+<div id="calculator" class="calc-container" style="display: none;">
+  <input id="calc-display" type="text" readonly />
+  <div class="calc-buttons">
+    <button class="calc-btn">7</button>
+    <button class="calc-btn">8</button>
+    <button class="calc-btn">9</button>
+    <button class="calc-btn">/</button>
+    <button class="calc-btn">4</button>
+    <button class="calc-btn">5</button>
+    <button class="calc-btn">6</button>
+    <button class="calc-btn">*</button>
+    <button class="calc-btn">1</button>
+    <button class="calc-btn">2</button>
+    <button class="calc-btn">3</button>
+    <button class="calc-btn">-</button>
+    <button class="calc-btn">0</button>
+    <button class="calc-btn">.</button>
+    <button class="calc-btn">=</button>
+    <button class="calc-btn">+</button>
+    <button class="calc-btn clear" style="grid-column: span 4;">C</button>
+  </div>
+</div>
+
 
     <h2>Транзакции</h2>
     <table id="transaction-table">
@@ -45,19 +91,22 @@
       <tbody></tbody>
     </table>
 
-    <div class="buttons">
-      <button id="save-csv"><i class="fas fa-file-csv"></i> CSV</button>
-      <button id="print-report"><i class="fas fa-print"></i> Печать</button>
-    </div>
+    <div class="action-panel">
+  <button id="save-csv"><i class="fas fa-file-csv"></i> CSV</button>
+  <button id="print-report"><i class="fas fa-print"></i> Печать</button>
+  <button id="toggle-currency-table" class="currency-toggle">💱 Валюты</button>
+  <button id="save-clear-month"><i class="fas fa-calendar-check"></i> Сохранить и очистить месяц</button>
+</div>
 
-    <button id="toggle-currency-table" class="currency-toggle">💱 Валюты</button>
     <div id="currency-table" class="currency-table" style="display: none;"></div>
 
     <h2>Графики</h2>
     <canvas id="doughnutChart" width="300" height="300"></canvas>
-    <canvas id="lineChart" width="600" height="300"></canvas>
+    <!-- <canvas id="lineChart" width="600" height="300"></canvas> -->
+     <canvas id="barChart" width="600" height="300"></canvas>
   </div>
 
+  
   <script src="script.js"></script>
 </body>
 </html>

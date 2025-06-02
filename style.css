@@ -1,7 +1,7 @@
-/* Финальный стиль для приложения */
+/* Общий фон и контейнер */
 body {
   font-family: sans-serif;
-  background: #f0f4f8;
+  background: linear-gradient(to right, #e0f7fa, #e8f5e9);
   margin: 0;
   padding: 20px;
   text-align: center;
@@ -9,30 +9,136 @@ body {
 
 .container {
   max-width: 900px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
+  margin: 0 auto;
+  padding: 15px;
+  box-sizing: border-box;
 }
 
+/* Форма добавления транзакции */
 form {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
   margin-bottom: 20px;
+  background: linear-gradient(to right, #e0f2f1, #f1f8e9);
+  padding: 16px;
+  border-radius: 16px;
 }
 
-input, select {
-  padding: 10px;
-  font-size: 1em;
+form input, form select {
+  padding: 10px 14px;
+  border-radius: 20px;
+  border: none;
+  font-size: 14px;
+  outline: none;
+  background: linear-gradient(135deg, #ffffff, #f1f1f1);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 
-input#comment {
+#comment {
   flex: 1 1 100%;
-  width: 100%;
+  background: linear-gradient(135deg, #ffe082, #ffcc80);
+  font-size: 14px;
+  border-radius: 16px;
+  resize: none;
 }
 
+#amount, #category, #date {
+  width: 180px;
+}
+
+/* Переключатель типа (доход/расход) */
+.type-toggle {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #c8e6c9, #fff9c4);
+  padding: 10px 16px;
+  border-radius: 20px;
+}
+
+.type-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.type-toggle input[type="radio"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #666;
+  border-radius: 50%;
+  outline: none;
+  transition: 0.2s ease;
+  position: relative;
+}
+
+.type-toggle input[type="radio"]:checked::before {
+  content: "";
+  display: block;
+  width: 10px;
+  height: 10px;
+  background: #4caf50;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+}
+
+/* Валюта и курс */
+#currency-flag {
+  margin-right: 6px;
+  font-size: 24px;
+}
+
+#currency, #rate {
+  border-radius: 12px;
+  padding: 6px 12px;
+  font-size: 14px;
+  background: linear-gradient(135deg, #e1f5fe, #b3e5fc);
+  border: none;
+}
+
+/* Быстрые кнопки валют */
+.quick-currencies-split {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0 20px;
+  align-items: center;
+  gap: 10px;
+}
+
+.quick-currencies-split .left,
+.quick-currencies-split .right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.quick-currency {
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ffcc80, #ffb74d);
+  color: #333;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.quick-currency:hover {
+  background: linear-gradient(135deg, #ffa726, #fb8c00);
+  color: white;
+}
+
+/* Кнопка "Добавить" */
 form button[type="submit"] {
   width: 100%;
   margin-top: 10px;
@@ -50,15 +156,17 @@ form button[type="submit"]:hover {
   background: linear-gradient(135deg, #388e3c, #2e7d32);
 }
 
-.buttons {
+/* Панель кнопок управления */
+.action-panel {
   margin: 20px 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   gap: 10px;
 }
 
-.buttons button {
+.action-panel button {
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 600;
@@ -71,56 +179,38 @@ form button[type="submit"]:hover {
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.buttons button:hover {
+.action-panel button:hover {
   background: linear-gradient(135deg, #1e88e5, #1565c0);
   transform: translateY(-1px);
 }
 
-.currency-toggle {
-  padding: 8px 14px;
-  font-size: 14px;
+/* Выделенная кнопка валют */
+#toggle-currency-table {
+  flex-grow: 1;
+  padding: 12px 20px;
+  font-size: 16px;
+  background: linear-gradient(135deg, #ffb74d, #ffa726);
   font-weight: bold;
-  background: linear-gradient(135deg, #1976d2, #64b5f6);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+#toggle-currency-table:hover {
+  background: linear-gradient(135deg, #fb8c00, #f57c00);
+}
+
+/* Кнопка "Сохранить и очистить месяц" */
+#save-clear-month {
+  font-size: 12px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #9e9e9e, #757575);
   color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: background 0.3s;
 }
 
-.currency-toggle:hover {
-  background: linear-gradient(135deg, #1565c0, #42a5f5);
+#save-clear-month:hover {
+  background: linear-gradient(135deg, #616161, #424242);
 }
 
-.currency-table {
-  margin: 15px auto;
-  max-width: 600px;
-  border-collapse: collapse;
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.currency-table table {
-  width: 100%;
-}
-
-.currency-table td, .currency-table th {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  text-align: left;
-  cursor: pointer;
-}
-
-.currency-table tr:hover {
-  background-color: #f1f1f1;
-}
-
-.currency-table td.flag {
-  font-size: 20px;
-}
-
+/* Таблица транзакций */
 #transaction-table {
   width: 100%;
   border-collapse: collapse;
@@ -156,3 +246,292 @@ tr.expense td {
   background-color: #ffebee;
   color: #c62828;
 }
+
+/* Таблица валют */
+.currency-table {
+  margin: 15px auto;
+  max-width: 600px;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.currency-table table {
+  width: 100%;
+}
+
+.currency-table td, .currency-table th {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  cursor: pointer;
+}
+
+.currency-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.currency-table td.flag {
+  font-size: 20px;
+}
+
+.quick-currencies-split {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0 20px;
+  gap: 20px;
+}
+
+.quick-currencies-split .left,
+.quick-currencies-split .right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.quick-currency {
+  min-width: 120px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ffcc80, #ffb74d);
+  color: #222;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  text-align: center;
+}
+
+.quick-currency:hover {
+  background: linear-gradient(135deg, #ffa726, #fb8c00);
+  color: white;
+}
+
+.popup-calc-btn {
+  margin: 20px auto;
+  padding: 10px 18px;
+  font-size: 15px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  color: #222; /* или black */
+
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  transition: background 0.3s ease;
+}
+
+.popup-calc-btn:hover {
+  background: linear-gradient(135deg, #f57c00, #e65100);
+}
+
+
+.calc-container {
+  max-width: 300px;
+  margin: 20px auto;
+  padding: 15px;
+  background: linear-gradient(135deg, #ffe0b2, #ffb74d);
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+#calc-display {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.4em;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  text-align: right;
+  box-sizing: border-box;
+  background: white;
+}
+
+
+.calc-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.calc-btn {
+  padding: 12px;
+  font-size: 1.2em;
+  border: none;
+  border-radius: 10px;
+  background: #fff3e0;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.calc-btn:hover {
+  background: #ffe0b2;
+}
+
+.calc-btn.clear {
+  background: #ef5350;
+  color: white;
+}
+
+
+/*--------------------------------- media -------------------------------------------------------*/
+
+/* Стили для удаления строк */
+.delete-cell {
+  text-align: center;
+  width: 30px;
+}
+
+.delete-btn {
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+}
+
+
+@media (max-width: 1024px) and (min-width: 601px) {
+  .container {
+    padding: 20px;
+    max-width: 95%;
+  }
+
+  #transaction-form input,
+  #transaction-form select,
+  #transaction-form button,
+  #transaction-form textarea {
+    font-size: 18px;
+    padding: 12px;
+  }
+
+  #transaction-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  table {
+    font-size: 16px;
+  }
+
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  #calculator {
+    max-width: 100%;
+    padding: 16px;
+  }
+
+  .popup-calc-btn {
+    font-size: 18px;
+    padding: 10px 18px;
+  }
+
+  .action-panel {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .action-panel button {
+    margin: 5px;
+    font-size: 16px;
+  }
+
+  #currency-table table {
+    font-size: 16px;
+  }
+}
+
+
+/* Мобильная адаптация */
+@media (max-width: 600px) {
+  body {
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  #transaction-form input,
+  #transaction-form select {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px;
+    margin-bottom: 8px;
+    box-sizing: border-box;
+  }
+
+    #transaction-form input[type="date"] {
+    min-width: 100%;
+    height: 48px;
+    padding: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+
+  #currency-flag {
+    font-size: 20px;
+    margin-right: 8px;
+  }
+
+  #rate {
+    width: 100px;
+    font-size: 16px;
+  }
+
+  #currency {
+    width: 80px;
+    font-size: 16px;
+  }
+
+  .quick-currencies-split {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  #toggle-calculator {
+    display: none;
+  }
+
+  #calculator {
+    display: block !important;
+    margin-top: 20px;
+  }
+
+  .calc-buttons {
+    gap: 5px;
+  }
+
+  #calc-display {
+    font-size: 20px;
+  }
+
+  .popup-calc-btn {
+    display: none;
+  }
+
+  #transaction-table td,
+  #transaction-table th {
+    font-size: 13px;
+    padding: 5px;
+  }
+
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
