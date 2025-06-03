@@ -1,6 +1,6 @@
 // script.js (финальная версия с графиками и валютами)
 document.addEventListener("DOMContentLoaded", () => {
-  
+
   const resultDiv = document.createElement("div");
   resultDiv.id = "month-result";
   resultDiv.style.margin = "20px auto";
@@ -50,20 +50,20 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   document.querySelectorAll(".quick-currency").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const code = btn.dataset.code;
-    const currencyObj = currencyList.find(c => c.code === code);
-    fetch("https://open.er-api.com/v6/latest/RUB")
-      .then(res => res.json())
-      .then(data => {
-        const rate = data.rates[code] ? (1 / data.rates[code]).toFixed(2) : "";
-        currencyInput.value = code;
-        rateInput.value = rate;
-        currencyFlag.textContent = currencyObj.flag || "🏳️";
-      })
-      .catch(() => alert("Не удалось загрузить курс валют."));
+    btn.addEventListener("click", () => {
+      const code = btn.dataset.code;
+      const currencyObj = currencyList.find(c => c.code === code);
+      fetch("https://open.er-api.com/v6/latest/RUB")
+        .then(res => res.json())
+        .then(data => {
+          const rate = data.rates[code] ? (1 / data.rates[code]).toFixed(2) : "";
+          currencyInput.value = code;
+          rateInput.value = rate;
+          currencyFlag.textContent = currencyObj.flag || "🏳️";
+        })
+        .catch(() => alert("Не удалось загрузить курс валют."));
+    });
   });
-});
 
 
   function updateCurrencyTable() {
@@ -103,7 +103,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function getCategoryIcon(type, category) {
-    category = category.toLowerCase();
+    category = category.toLowerCase().trim();
+
     if (type === 'expense') {
       if (category.includes('апт')) return '💊';
       if (category.includes('продукт') || category.includes('еда')) return '🛒';
@@ -119,22 +120,72 @@ document.addEventListener("DOMContentLoaded", () => {
       if (category.includes('животн') || category.includes('кот') || category.includes('собак')) return '🐾';
       if (category.includes('подар')) return '🎁';
       if (category.includes('страх')) return '🛡️';
+      if (category.includes('бенз') || category.includes('заправ') || category.includes('топлив')) return '⛽';
+      if (category.includes('такси')) return '🚕';
+      if (category.includes('космет')) return '💄';
+      if (category.includes('подписк') || category.includes('онлайн')) return '📺';
+      if (category.includes('отпуск') || category.includes('путеше') || category.includes('поезд')) return '✈️';
+      if (category.includes('кино') || category.includes('театр')) return '🎭';
+      if (category.includes('спорт') || category.includes('фитнес') || category.includes('трен')) return '🏋️';
+      if (category.includes('аренд') && category.includes('дом')) return '🏡';
+      if (category.includes('коммун') || category.includes('свет') || category.includes('вода')) return '💡';
+      if (category.includes('ремонт')) return '🛠️';
+      if (category.includes('мебел')) return '🪑';
+      if (category.includes('техник') || category.includes('быт')) return '📺';
+      if (category.includes('разное')) return '🔹';
       return '❓';
     } else {
-      if (category.includes('аренда') || category.includes('машин') || category.includes('авто')) return '🚗';
-      if (category.slice(-1) === 'а') return '👩';
-      return '👨';
+      // ДОХОДЫ
+      const incomeIcons = [
+        { keywords: ['зарплата', 'зарплат'], icon: '💼' },
+        { keywords: ['аренд', 'дом'], icon: '🏡', requireAll: true },
+        { keywords: ['аренд'], optional: ['авто', 'машин'], icon: '🚗' },
+        { keywords: ['подар'], icon: '🎁' },
+        { keywords: ['долг', 'возврат'], icon: '🔁' },
+        { keywords: ['инвест', 'вклад'], icon: '📈' },
+        { keywords: ['фриланс', 'подработ'], icon: '💻' },
+        { keywords: ['пособ', 'выплат', 'гос'], icon: '🏛️' },
+        { keywords: ['продаж'], icon: '💸' },
+        { keywords: ['бонус', 'кэшбэк'], icon: '🎉' },
+        { keywords: ['процент'], icon: '💰' },
+        { keywords: ['онлайн', 'ютуб', 'youtube'], icon: '🌐' },
+      ];
+
+      for (let item of incomeIcons) {
+        if (item.requireAll) {
+          if (item.keywords.every(k => category.includes(k))) return item.icon;
+        } else if (item.optional) {
+          if (category.includes(item.keywords[0]) &&
+            item.optional.some(k => category.includes(k))) {
+            return item.icon;
+          }
+        } else {
+          if (item.keywords.some(k => category.includes(k))) return item.icon;
+        }
+      }
+
+      // Проверка имени
+      const femaleNames = ["анна", "мария", "наташа", "ольга", "света", "юлия", "катя", "вероника"];
+      const maleNames = ["сергей", "иван", "павел", "михаил", "андрей", "дмитрий", "николай", "дима"];
+
+      const words = category.split(/\s+/);
+      const lastWord = words[words.length - 1];
+
+      if (femaleNames.includes(lastWord)) return '👩';
+      if (maleNames.includes(lastWord)) return '👨';
+
+      return '👨'; // По умолчанию
     }
   }
 
   function renderTable() {
-  tableBody.innerHTML = "";
-  transactions.forEach((tx, index) => {
-    const row = document.createElement("tr");
-    row.className = tx.type;
-    row.setAttribute("data-index", index);
+    tableBody.innerHTML = "";
+    transactions.forEach((tx, index) => {
+      const row = document.createElement("tr");
+      row.className = tx.type;
+      row.setAttribute("data-index", index);
 
-    row.innerHTML = `
+      row.innerHTML = `
       <td>${tx.date || ''}</td>
       <td>${tx.type === 'income' ? 'Доход' : 'Расход'}</td>
       <td>${tx.amount ? tx.amount.toFixed(2) : '0.00'}</td>
@@ -144,161 +195,116 @@ document.addEventListener("DOMContentLoaded", () => {
       </td>
       <td class="delete-cell"><span class="delete-btn" title="Удалить">❌</span></td>
     `;
-row.querySelector(".delete-btn").addEventListener("click", (e) => {
-  e.stopPropagation(); // Чтобы не срабатывал основной клик по строке
-  const idx = parseInt(row.getAttribute("data-index"));
-  transactions.splice(idx, 1);
-  localStorage.setItem("transactions", JSON.stringify(transactions));
-  renderTable();
-  renderDoughnutChart();
-  renderBarChart();
-  renderMonthResult(); // ✅ именно здесь
-});
+      row.querySelector(".delete-btn").addEventListener("click", (e) => {
+        e.stopPropagation(); // Чтобы не срабатывал основной клик по строке
+        const idx = parseInt(row.getAttribute("data-index"));
+        transactions.splice(idx, 1);
+        localStorage.setItem("transactions", JSON.stringify(transactions));
+        renderTable();
+        renderDoughnutChart();
+        renderBarChart();
+        renderMonthResult(); // ✅ именно здесь
+      });
 
-    row.addEventListener("click", () => {
-  const idx = parseInt(row.getAttribute("data-index"));
-  const tx = transactions[idx];
+      row.addEventListener("click", () => {
+        const idx = parseInt(row.getAttribute("data-index"));
+        const tx = transactions[idx];
 
-  // Перемещаем транзакцию в начало списка
-  transactions.splice(idx, 1);
-  transactions.unshift(tx);
-  localStorage.setItem("transactions", JSON.stringify(transactions));
+        // Перемещаем транзакцию в начало списка
+        transactions.splice(idx, 1);
+        transactions.unshift(tx);
+        localStorage.setItem("transactions", JSON.stringify(transactions));
 
-  // Заполняем поля формы
-  amountInput.value = tx.amount;
-  categoryInput.value = tx.category;
-  dateInput.value = tx.date;
-  commentInput.value = tx.comment;
-  document.querySelector(`input[name="type"][value="${tx.type}"]`).checked = true;
+        // Заполняем поля формы
+        amountInput.value = tx.amount;
+        categoryInput.value = tx.category;
+        dateInput.value = tx.date;
+        commentInput.value = tx.comment;
+        document.querySelector(`input[name="type"][value="${tx.type}"]`).checked = true;
 
-  renderTable();
-  renderDoughnutChart();
-  renderBarChart();
-  renderMonthResult(); // ✅ именно здесь
-// });
+        renderTable();
+        renderDoughnutChart();
+        renderBarChart();
+        renderMonthResult(); // ✅ именно здесь
 
-//     });
+        function renderBarChart() {
+          const ctx = document.getElementById("barChart").getContext("2d");
 
-//     tableBody.appendChild(row);
-//   });
-// }
+          // Группируем категории расходов
+          const categoryTotals = {};
 
+          transactions.forEach(t => {
+            if (t.type === 'expense') {
+              const cat = t.category || 'Без категории';
+              categoryTotals[cat] = (categoryTotals[cat] || 0) + t.amount;
+            }
+          });
 
-  
-function renderBarChart() {
-  const ctx = document.getElementById("barChart").getContext("2d");
+          const labels = Object.keys(categoryTotals);
+          const data = Object.values(categoryTotals);
 
-  // Группируем категории расходов
-  const categoryTotals = {};
+          if (window.barChartInstance) window.barChartInstance.destroy(); // очищаем, если был
+          window.barChartInstance = new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: labels,
+              datasets: [{
+                label: "Расходы по категориям",
+                data: data,
+                backgroundColor: "#ff7043"
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: { display: false },
+                title: { display: true, text: 'Расходы по категориям' }
+              },
+              scales: {
+                y: { beginAtZero: true }
+              }
+            }
+          });
+        }
 
-  transactions.forEach(t => {
-    if (t.type === 'expense') {
-      const cat = t.category || 'Без категории';
-      categoryTotals[cat] = (categoryTotals[cat] || 0) + t.amount;
-    }
-  });
+        calcBtn.addEventListener("click", () => {
+          calcBox.style.display = calcBox.style.display === "none" ? "block" : "none";
+        });
 
-  const labels = Object.keys(categoryTotals);
-  const data = Object.values(categoryTotals);
+        calcBox.addEventListener("click", e => {
+          if (!e.target.classList.contains("calc-btn")) return;
+          const input = document.getElementById("calc-input");
+          const value = e.target.textContent;
+          if (value === '=') {
+            try {
+              input.value = eval(input.value);
+            } catch {
+              input.value = 'Ошибка';
+            }
+          } else {
+            input.value += value;
+          }
+        });
+        renderMonthResult();
 
-  if (window.barChartInstance) window.barChartInstance.destroy(); // очищаем, если был
-  window.barChartInstance = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: labels,
-      datasets: [{
-        label: "Расходы по категориям",
-        data: data,
-        backgroundColor: "#ff7043"
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        title: { display: true, text: 'Расходы по категориям' }
-      },
-      scales: {
-        y: { beginAtZero: true }
-      }
-    }
-  });
-}
+        calcBtn.addEventListener("click", () => {
+          calcBox.style.display = calcBox.style.display === "none" ? "block" : "none";
+        });
 
-
-
-  
-
-
-
-  calcBtn.addEventListener("click", () => {
-    calcBox.style.display = calcBox.style.display === "none" ? "block" : "none";
-  });
-
-  calcBox.addEventListener("click", e => {
-    if (!e.target.classList.contains("calc-btn")) return;
-    const input = document.getElementById("calc-input");
-    const value = e.target.textContent;
-    if (value === '=') {
-      try {
-        input.value = eval(input.value);
-      } catch {
-        input.value = 'Ошибка';
-      }
-    } else {
-      input.value += value;
-    }
-  });
-    renderMonthResult();
-
-  // // Калькулятор
-  // const calcBtn = document.createElement("button");
-  // calcBtn.textContent = "🧮 Калькулятор";
-  // calcBtn.style.margin = "10px";
-  // calcBtn.style.padding = "8px 16px";
-  // calcBtn.style.borderRadius = "20px";
-  // calcBtn.style.border = "none";
-  // calcBtn.style.background = "linear-gradient(135deg, #ffa726, #fb8c00)";
-  // calcBtn.style.color = "white";
-  // calcBtn.style.cursor = "pointer";
-
-  // const calcBox = document.createElement("div");
-  // calcBox.style.display = "none";
-  // calcBox.style.margin = "10px auto";
-  // calcBox.style.maxWidth = "300px";
-  // calcBox.style.padding = "20px";
-  // calcBox.style.border = "1px solid #ccc";
-  // calcBox.style.borderRadius = "12px";
-  // calcBox.style.background = "#fff";
-
-  // calcBox.innerHTML = `
-  //   <input id="calc-input" type="text" style="width: 100%; padding: 10px; font-size: 1.2em; margin-bottom: 10px;" />
-  //   <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-  //     ${[7,8,9,'/',4,5,6,'*',1,2,3,'-','0','.','=','+'].map(c => `<button class="calc-btn">${c}</button>`).join('')}
-  //   </div>
-  // `;
-
-  // document.querySelector(".container").appendChild(calcBtn);
-  // document.querySelector(".container").appendChild(calcBox);
-
-  calcBtn.addEventListener("click", () => {
-    calcBox.style.display = calcBox.style.display === "none" ? "block" : "none";
-  });
-
-  calcBox.addEventListener("click", e => {
-    if (!e.target.classList.contains("calc-btn")) return;
-    const input = document.getElementById("calc-input");
-    const value = e.target.textContent;
-    if (value === '=') {
-      try {
-        input.value = eval(input.value);
-      } catch {
-        input.value = 'Ошибка';
-      }
-    } else {
-      input.value += value;
-    }
-  });
+        calcBox.addEventListener("click", e => {
+          if (!e.target.classList.contains("calc-btn")) return;
+          const input = document.getElementById("calc-input");
+          const value = e.target.textContent;
+          if (value === '=') {
+            try {
+              input.value = eval(input.value);
+            } catch {
+              input.value = 'Ошибка';
+            }
+          } else {
+            input.value += value;
+          }
+        });
       });
       tableBody.appendChild(row);
     });
@@ -327,124 +333,74 @@ function renderBarChart() {
     });
   }
 
-function renderBarChart() {
-  const ctx = document.getElementById("barChart").getContext("2d");
+  function renderBarChart() {
+    const ctx = document.getElementById("barChart").getContext("2d");
 
-  const categoryTotals = {};
-  transactions.forEach(t => {
-    if (t.type === 'expense') {
-      const cat = t.category || 'Без категории';
-      categoryTotals[cat] = (categoryTotals[cat] || 0) + t.amount;
-    }
-  });
-
-  const labels = Object.keys(categoryTotals);
-  const data = Object.values(categoryTotals);
-
-  // Фиксированные цвета для некоторых категорий
-  const categoryColors = {
-    "аптека": "#e57373",       // красный
-    "продукты": "#81c784",     // зелёный
-    "транспорт": "#64b5f6",    // синий
-    "кафе": "#ffb74d",         // оранжевый
-    "одежда": "#ba68c8",       // фиолетовый
-    "жилье": "#4db6ac",        // бирюзовый
-    "интернет": "#7986cb",     // голубовато-синий
-    "развлечения": "#f06292",  // розовый
-    "учеба": "#9575cd",        // сиреневый
-    "подарки": "#fbc02d",      // жёлтый
-  };
-
-  const backgroundColors = labels.map(cat => {
-    const lower = cat.toLowerCase();
-    for (let key in categoryColors) {
-      if (lower.includes(key)) {
-        return categoryColors[key];
+    const categoryTotals = {};
+    transactions.forEach(t => {
+      if (t.type === 'expense') {
+        const cat = t.category || 'Без категории';
+        categoryTotals[cat] = (categoryTotals[cat] || 0) + t.amount;
       }
-    }
-    // случайный цвет для неизвестных категорий
-    return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
-  });
+    });
 
-  if (window.barChartInstance) window.barChartInstance.destroy();
+    const labels = Object.keys(categoryTotals);
+    const data = Object.values(categoryTotals);
 
-  window.barChartInstance = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels,
-      datasets: [{
-        label: "Расходы по категориям",
-        data,
-        backgroundColor: backgroundColors
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        title: { display: true, text: 'Расходы по категориям' }
+    // Фиксированные цвета для некоторых категорий
+    const categoryColors = {
+      "аптека": "#e57373",       // красный
+      "продукты": "#81c784",     // зелёный
+      "транспорт": "#64b5f6",    // синий
+      "кафе": "#ffb74d",         // оранжевый
+      "одежда": "#ba68c8",       // фиолетовый
+      "жилье": "#4db6ac",        // бирюзовый
+      "интернет": "#7986cb",     // голубовато-синий
+      "развлечения": "#f06292",  // розовый
+      "учеба": "#9575cd",        // сиреневый
+      "подарки": "#fbc02d",      // жёлтый
+    };
+
+    const backgroundColors = labels.map(cat => {
+      const lower = cat.toLowerCase();
+      for (let key in categoryColors) {
+        if (lower.includes(key)) {
+          return categoryColors[key];
+        }
+      }
+      // случайный цвет для неизвестных категорий
+      return `hsl(${Math.floor(Math.random() * 360)}, 70%, 60%)`;
+    });
+
+    if (window.barChartInstance) window.barChartInstance.destroy();
+
+    window.barChartInstance = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{
+          label: "Расходы по категориям",
+          data,
+          backgroundColor: backgroundColors
+        }]
       },
-      scales: {
-        y: { beginAtZero: true }
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: 'Расходы по категориям' }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
       }
-    }
-  });
-}
-
-
-
-
-  // function renderLineChart() {
-  //   if (lineChart) lineChart.destroy();
-  //   const dailyIncome = {}, dailyExpense = {};
-  //   transactions.forEach(t => {
-  //     if (!dailyIncome[t.date]) dailyIncome[t.date] = 0;
-  //     if (!dailyExpense[t.date]) dailyExpense[t.date] = 0;
-  //     if (t.type === 'income') dailyIncome[t.date] += t.amount;
-  //     if (t.type === 'expense') dailyExpense[t.date] += t.amount;
-  //   });
-  //   const labels = [...new Set(transactions.map(t => t.date))].sort();
-  //   const incomeData = labels.map(d => dailyIncome[d] || 0);
-  //   const expenseData = labels.map(d => dailyExpense[d] || 0);
-
-  //   lineChart = new Chart(lineCtx, {
-  //     type: 'line',
-  //     data: {
-  //       labels: labels,
-  //       datasets: [
-  //         {
-  //           label: 'Доходы',
-  //           data: incomeData,
-  //           borderColor: 'green',
-  //           backgroundColor: 'rgba(76, 175, 80, 0.2)',
-  //           fill: true,
-  //           tension: 0.3
-  //         },
-  //         {
-  //           label: 'Расходы',
-  //           data: expenseData,
-  //           borderColor: 'red',
-  //           backgroundColor: 'rgba(244, 67, 54, 0.2)',
-  //           fill: true,
-  //           tension: 0.3
-  //         }
-  //       ]
-  //     },
-  //     options: {
-  //       responsive: true,
-  //       plugins: {
-  //         legend: { position: 'top' },
-  //         title: { display: true, text: 'Доходы и расходы по дням' }
-  //       },
-  //       scales: { y: { beginAtZero: true } }
-  //     }
-  //   });
-  // }
+    });
+  }
 
   form.addEventListener("submit", e => {
-  e.preventDefault();
-  let amount = parseFloat(amountInput.value);
-  const type = document.querySelector('input[name="type"]:checked').value; // ✅
+    e.preventDefault();
+    let amount = parseFloat(amountInput.value);
+    const type = document.querySelector('input[name="type"]:checked').value; // ✅
     const category = categoryInput.value.trim();
     const date = dateInput.value;
     const comment = commentInput.value.trim();
@@ -486,43 +442,43 @@ function renderBarChart() {
   printBtn.addEventListener("click", () => window.print());
 
   document.getElementById("save-clear-month").addEventListener("click", () => {
-  if (transactions.length === 0) {
-    alert("Нет данных для сохранения.");
-    return;
-  }
+    if (transactions.length === 0) {
+      alert("Нет данных для сохранения.");
+      return;
+    }
 
-  const now = new Date();
-  const month = now.getMonth() + 1; // от 0 до 11
-  const year = now.getFullYear();
-  const fileName = `transactions_${year}-${month.toString().padStart(2, '0')}.csv`;
+    const now = new Date();
+    const month = now.getMonth() + 1; // от 0 до 11
+    const year = now.getFullYear();
+    const fileName = `transactions_${year}-${month.toString().padStart(2, '0')}.csv`;
 
-  const rows = [["Дата", "Тип", "Сумма", "Категория", "Комментарий"]];
-  transactions.forEach(t => {
-    rows.push([
-      t.date || '',
-      t.type === 'income' ? 'Доход' : 'Расход',
-      t.amount ? t.amount.toFixed(2) : '0.00',
-      t.category || '',
-      t.comment || ''
-    ]);
+    const rows = [["Дата", "Тип", "Сумма", "Категория", "Комментарий"]];
+    transactions.forEach(t => {
+      rows.push([
+        t.date || '',
+        t.type === 'income' ? 'Доход' : 'Расход',
+        t.amount ? t.amount.toFixed(2) : '0.00',
+        t.category || '',
+        t.comment || ''
+      ]);
+    });
+
+    const blob = new Blob([rows.map(r => r.join(",")).join("\n")], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+
+    // Очистка
+    transactions = [];
+    localStorage.removeItem("transactions");
+    renderTable();
+    renderDoughnutChart();
+    renderBarChart();
+    renderMonthResult();
+    document.getElementById("month-result").innerHTML = "";
+
   });
-
-  const blob = new Blob([rows.map(r => r.join(",")).join("\n")], { type: "text/csv" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = fileName;
-  link.click();
-
-  // Очистка
-  transactions = [];
-  localStorage.removeItem("transactions");
-  renderTable();
-  renderDoughnutChart();
-  renderBarChart();
-  renderMonthResult();
-  document.getElementById("month-result").innerHTML = "";
-
-});
 
 
   function renderMonthResult() {
@@ -536,14 +492,14 @@ function renderBarChart() {
     resultHTML += `<p style="color:${balance >= 0 ? 'green' : 'red'}">${balance >= 0 ? 'Профицит' : 'Дефицит'}: <strong>${balance.toFixed(2)}</strong></p>`;
 
     if (new Date().getDate() === 1) {
-  if (balance >= 0) {
-    resultHTML += `<div style="font-size: 48px; animation: bounce 1s infinite;">🏆</div>`;
-    resultHTML += `<div style="font-weight: bold; color: green;">Так держать!</div>`;
-  } else {
-    resultHTML += `<div style="font-size: 48px; animation: bounce 1s infinite;">😞</div>`;
-    resultHTML += `<div style="font-weight: bold; color: red;">Попробуй в следующем месяце!</div>`;
-  }
-}
+      if (balance >= 0) {
+        resultHTML += `<div style="font-size: 48px; animation: bounce 1s infinite;">🏆</div>`;
+        resultHTML += `<div style="font-weight: bold; color: green;">Так держать!</div>`;
+      } else {
+        resultHTML += `<div style="font-size: 48px; animation: bounce 1s infinite;">😞</div>`;
+        resultHTML += `<div style="font-weight: bold; color: red;">Попробуй в следующем месяце!</div>`;
+      }
+    }
     document.getElementById("month-result").innerHTML = resultHTML;
   }
 
@@ -558,57 +514,7 @@ function renderBarChart() {
   // renderLineChart();
   renderMonthResult();
   renderDoughnutChart();
-renderBarChart();
-
-
-  // // Калькулятор
-  // const calcBtn = document.createElement("button");
-  // calcBtn.textContent = "🧮 Калькулятор";
-  // calcBtn.style.margin = "10px";
-  // calcBtn.style.padding = "8px 16px";
-  // calcBtn.style.borderRadius = "20px";
-  // calcBtn.style.border = "none";
-  // calcBtn.style.background = "linear-gradient(135deg, #ffa726, #fb8c00)";
-  // calcBtn.style.color = "white";
-  // calcBtn.style.cursor = "pointer";
-
-  // const calcBox = document.createElement("div");
-  // calcBox.style.display = "none";
-  // calcBox.style.margin = "10px auto";
-  // calcBox.style.maxWidth = "300px";
-  // calcBox.style.padding = "20px";
-  // calcBox.style.border = "1px solid #ccc";
-  // calcBox.style.borderRadius = "12px";
-  // calcBox.style.background = "#fff";
-
-  // calcBox.innerHTML = `
-  //   <input id="calc-input" type="text" style="width: 100%; padding: 10px; font-size: 1.2em; margin-bottom: 10px;" />
-  //   <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
-  //     ${[7,8,9,'/',4,5,6,'*',1,2,3,'-','0','.','=','+'].map(c => `<button class="calc-btn">${c}</button>`).join('')}
-  //   </div>
-  // `;
-
-  // document.querySelector(".container").appendChild(calcBtn);
-  // document.querySelector(".container").appendChild(calcBox);
-
-  // calcBtn.addEventListener("click", () => {
-  //   calcBox.style.display = calcBox.style.display === "none" ? "block" : "none";
-  // });
-
-  // calcBox.addEventListener("click", e => {
-  //   if (!e.target.classList.contains("calc-btn")) return;
-  //   const input = document.getElementById("calc-input");
-  //   const value = e.target.textContent;
-  //   if (value === '=') {
-  //     try {
-  //       input.value = eval(input.value);
-  //     } catch {
-  //       input.value = 'Ошибка';
-  //     }
-  //   } else {
-  //     input.value += value;
-  //   }
-  // });
+  renderBarChart();
 });
 
 // --- Калькулятор ---
